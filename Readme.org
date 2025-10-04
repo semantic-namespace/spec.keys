@@ -1,0 +1,52 @@
+* semantic-namespace/spec.keys
+
+** rationale
+
+Naming/define a collection of clojure.spec/keys  with 1 namespace-keyword ~(s/def ::xxx (s/keys [....])~, results on the endless types ([[https://youtu.be/YR5WdGrpoug?si=nBs1Q7-rTVt9XC1Q][Maybe Not]]) problem.
+The approach proposed in this lib, uses a [[https://github.com/semantic-namespace/compound-identity][compound-identity]]  ~(semantic-namespace.spec.keys/def #{::xxx ::yyy} [....])~ with just the collection of spec-keys, to define clojure.spec/keys based on any combination of namespace-keywords.
+
+Example:
+ #+BEGIN_SRC clojure
+ (require '[semantic-namespace.spec.keys :as spec.keys]
+	  '[clojure.spec.alpha :as s])
+
+ (s/def ::id string?)
+ (s/def ::alias string?)
+
+ (spec.keys/def
+   #{:app.api.endpoint.get/response
+     :app.domain/user}
+   [::id ::alias])
+ ;;
+ (spec.keys/valid?
+  #{:app.api.endpoint.get/response
+    :app.domain/user}
+  {::id "foo" ::alias "@foo"})
+ ;;=> true
+
+ (spec.keys/valid?
+  #{:app.api.endpoint.get/response
+    :app.domain/user}
+  {::id "foo" ::alias 55})
+ ;;=> false
+
+
+ (spec.keys/valid?
+  #{:app.api.endpoint.get/response
+    :app.domain/user}
+  {::id "foo" ::emal "foo@foo"})
+ ;;=> false
+ #+END_SRC
+
+
+** clojars info
+https://clojars.org/com.github.semantic-namespace/spec.keys
+
+
+** usage
+https://github.com/semantic-namespace/spec.keys/blob/main/test/semantic_namespace/spec/keys_test.clj
+
+
+** License
+
+https://opensource.org/licenses/MIT
